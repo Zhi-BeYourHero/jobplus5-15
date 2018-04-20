@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from getcompany.items import GetcompanyItem 
 
 class CompanySpider(scrapy.Spider):
     name = 'company'
@@ -9,9 +8,9 @@ class CompanySpider(scrapy.Spider):
 
     def parse(self, response):
         for company in response.css('dl.comp-list-box dd ul li'):
-            yield GetcompanyItem({
+            yield {
                     'name': company.css('a span::text').extract_first(),
-                    'logo': company.css('a::attr(href)').extract_first()
-                    })
+                    'logo': company.css('a img::attr(src)').extract_first()
+                    }
 
         
