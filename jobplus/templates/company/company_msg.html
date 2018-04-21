@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{company.name}}{% endblock %}
+
+{% block head %}
+<div class="jumbotron">
+   <div class="container">
+        <div class="col-md-3">
+	  <div class="thumbnail">
+	      <img src="{{ company.company_msg.logo }}">
+	  </div>
+	</div>
+	<div class="col-md-9">
+	   <h2>{{ company.name }}</h2>
+	   <p> {{ company.company_msg.oneword_profile }} </p>
+	   <a href="{{ company.company_msg.website }}">{{ company.company_msg.webite }}</a>
+        </div>	
+   </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="col-md-8">
+   <ul class="nav nav-tabs">
+       <li role="presentation" class="{% if panel == 'company_description' %}active{% endif %}"><a href="{{ url_for('company.company_msg',company_id=company.id) }}">公司介绍</a></li>
+       <li role="presentation" class="{% if panel == 'jobs' %}active{% endif %}"><a href="{{ url_for('company.company_jobs', company_id=company.id) }}">在招职位({{ company.jobs.count() }})</a></li>
+   </ul>
+      <div class="company-msg">
+	  {% if panel == 'company_description' %}
+          {% company.company_msg.detail %}
+	  {% else %}
+	  {% for jon im company.jobs %}
+	  <div class="job-item">
+              <a href="{{ url_for('job.') }}">
+         
+          </div>
+	  {% endfor %}
+	  {% endif %}
+      </div>
+    
+</div>
+{% endblock %}
+

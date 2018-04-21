@@ -13,7 +13,7 @@ def iter_companies():
                     name=company['name'],
                     email=f.email(),
                     password=f.password(),
-                    role=User.ROLE_COMAPNY,
+                    role=User.ROLE_COMAPNY
                     
                     )
             
@@ -47,4 +47,5 @@ def run():
         db.session.rollback()
 
 
-
+if __name__ == '__main__':
+    run()

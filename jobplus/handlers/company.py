@@ -29,3 +29,18 @@ def index():
         error_out=False
     )
     return render_template('company/index.html', pagination=pagination, active='company')
+
+@company.route('/<int:company_id>')
+def company_msg(company_id):
+    company = User.query.get_or_404(company_id)
+    if not company.is_company:
+        abort(404)
+    return render_template('company/company_msg.html', company=company, active='', panel='company_description')
+
+@company.route('/<int:company_id>/jobs')
+def company_jobs(company_id):
+    company = User.query.get_or_404(company_id)
+    if not company.is_company:
+        abort(404)
+    return render_template('company/company_msg.html'. company=company, active='', panel='jobs')
+
