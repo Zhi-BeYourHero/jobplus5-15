@@ -36,7 +36,7 @@
             <li class="active"><a href="#">{{page}} <span class="sr-only">(current)</span></a></li>
             {% endif %}
         {% else %}
-            <span class="ellipsis">...</span>
+            <span class="ellipsis"></span>
         {% endif %}
     {% endfor %}
     <li{% if not pagination.has_next %} class="disabled"{% endif %}><a href="{{url_for(endpoint, page=pagination.next_num) if pagination.has_next else "#"}}">&raquo;</a></li>
@@ -48,19 +48,23 @@
 <div class="col-sm-6 col-md-4">
 <div class="job-box">
     <div class="caption">
+      <a href="{{ url_for('job.job_msg', job_id=job.id) }}">
        <b>{{ job.name }}</b>
-       <p>经验{{ job.experience_requirement }} {% if job.experience_requirement != '不限' %}年{% endif %} 学历{{ job.degree_requirement }}</p>
+       <p>经验{{ job.experience_requirement }} {% if job.experience_requirement != '不限' %}{% endif %} 学历{{ job.degree_requirement }}</p>
        {% for tag in job.tag_list %}
        <span class="label label-default">{{ tag }}</span>
        {% endfor %}
+       </a>
      </div>
      <hr>
      <div class="media">
          <div class="media-left">
-            <a href="#"><img class="media-object" src="{{ job.company.logo }}" width="40" height="40" alt="..."></a>
+            <a href="{{ url_for('company.company_msg', company_id=job.company.id) }}">
+            <img class="media-object" src="{{ job.company.company_msg.logo }}" width="40" height="40" alt="...">
          </div>
          <div class="media-body"><h4 class="media-heading">{{ job.company.name }}</h4>
-         <span class="company-meta">{{ job.salary_min }}-{{ job.salary_max }}/{{ job.company.detail.field }}/{{ job.company.company_msg.finance_stage }}/{{ job.company.company_msg.address }}{% if job.is_fulltime %}/全职{% endif %}</span>
+         </a>
+         <span class="company-meta">{{ job.salary }}/{{ job.company.company_msg.tags }}{{ job.company.company_msg.finance_stage }}/{{ job.company.company_msg.address }}</span>
           </div>
      </div>
 </div>

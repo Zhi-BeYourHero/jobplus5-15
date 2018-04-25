@@ -1,28 +1,29 @@
 import json
-import os
+import os, sys
 from faker import Faker
-from jobplus.models import db, User, Company
+sys.path.append('/home/zhi/jobplus5-15/jobplus')
+from models import db, User, Company
 
 f = Faker(locale='zh-cn')
 
 def iter_companies():
-    with open(os.path.join(os.path.dirname(__file__),'..','datas','companies.json')) as f:
-        companies = json.load(f)
+    with open(os.path.join(os.path.dirname(__file__),'..','datas','companymsg.json')) as ff:
+        companies = json.load(ff)
     for company in companies:
             yield User(
                     name=company['name'],
                     email=f.email(),
                     password=f.password(),
-                    role=User.ROLE_COMAPNY
+                    role=User.ROLE_COMPANY
                     
                     )
             
 def iter_companies_msg():
-    with open(os).path.join(os.path.dirname(__file__),'..','datas','companies.json') as f:
-        companies_msg = json.load(f)
+    with open(os.path.join(os.path.dirname(__file__),'..','datas','companymsg.json')) as ff:
+        companies_msg = json.load(ff)
     for company_msg in companies_msg:
         user = User.query.filter_by(name=company_msg['name']).first()
-        yield company_msg(
+        yield Company(
                 logo=company_msg['logo'],
                 user=user,
                 address=f.address(),
@@ -47,5 +48,3 @@ def run():
         db.session.rollback()
 
 
-if __name__ == '__main__':
-    run()

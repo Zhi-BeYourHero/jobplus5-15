@@ -167,3 +167,27 @@ class CompanyEditForm(FlaskForm):
         db.session.add(company_msg)
         db.session.add(company)
         db.session.commit()
+
+class JobForm(FlaskForm):
+    name = StringField('职位名称')
+    salary_min = IntegerField('最低工资')
+    salary_max = IntegerField('最高工资')
+    experience_required = StringField('经验要求', validators=[Length(1,25)])
+    job_description = StringField('职位描述')
+    job_requirement = TextAreaField('职位要求')
+    submit = SubmitField('发布职位')
+
+    def create_job(self, company):
+        job = Job()
+        self.populate_obj(job)
+        job.company_id=company.id
+        db.session.add(job)
+        db.session.commit()
+        return job
+
+    def update_job(self, job):
+        self.populate_obj(job)
+        db.session.add(job)
+        db.session.commit()
+        return job
+

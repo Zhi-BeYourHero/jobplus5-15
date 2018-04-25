@@ -10,13 +10,10 @@ class Base(db.Model):
     created_at = db.Column(db.DateTime, default = datetime.utcnow)
     updated_at = db.Column(db.DateTime, default = datetime.utcnow, onupdate = datetime.utcnow)
 
-#必须设置，否则会报sqlalchemy.exc.NoForeignKeysError
-#sqlalchemy.exc.NoForeignKeysError: Could not determine join condition between parent/child tables on relationship Job.company - there are no foreign keys linking these tables. Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression
 user_job = db.Table(
     'user_job',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('job_id', db.Integer, db.ForeignKey('job.id'))
-
 )
 
 class User(Base, UserMixin):
@@ -68,9 +65,10 @@ class Company(Base):
     website = db.Column(db.String(512))
     #一句话简介
     oneword_profile = db.Column(db.String(64))
-    #finance_stage = db.Column(db.String(128))
+    finance_stage = db.Column(db.String(128), default="A轮")
     address = db.Column(db.String(128))
     #职位个数
+    field = db.Column(db.String(128))
     position_number = db.Column(db.Integer)
     oneword_profile = db.Column(db.String(64))
     #公司详情
@@ -86,14 +84,15 @@ class Job(Base):
     __tablename__  = 'job'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(32))
-    salary_min = db.Column(db.Integer, nullable=False)
-    salary_max = db.Column(db.Integer, nullable=False)
-    experience_requirement = db.Column(db.String(1024) , nullable=False)
+    name = db.Column(db.String(64))
+    #salary_min = db.Column(db.Integer, nullable=False)
+    #salary_max = db.Column(db.Integer, nullable=False)
+    salary = db.Column(db.String(128))
+    experience_requirement = db.Column(db.String(64))
     tags = db.Column(db.String(128))
     degree_requirement = db.Column(db.String(64))
     is_fulltime = db.Column(db.Boolean, default=True)
-    address = db.Column(db.String(64), nullable=False)
+    address = db.Column(db.String(64), nullable=False,default="全国各地")
     company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False, backref=db.backref('jobs', lazy='dynamic'))
     #职位要求
@@ -102,11 +101,32 @@ class Job(Base):
     job_description = db.Column(db.String(128))
     #职位个数
     job_number = db.Column(db.Integer, default=0)
-
+    is_online = db.Column(db.Boolean, default=True) 
     def __repr__(self):
         return '<Job {}>'.format(self.name)
 
     @property
     def tag_list(self):
-        return self.tags.split(',')
+        return self.tags.split('/')
     
+    @property
+    def current_user_is_applied(self):
+        d = Dilivery.query.filter_by(job_id=self.id, user_id=current_user.id).first()
+        
+        return (d is not None) 
+
+class Dilivery(Base):
+    __tablename__ = 'delivery'
+    #等待企业审核
+    STATUS_WAITING = 1
+    #被拒绝
+    STATUS_REJECT = 2
+    #简历被接收，等待面试通知
+    STATUS_ACCEPT = 3
+
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id', ondelete="SET NULL"))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="SET NULL"))
+    status = db.Column(db.SmallInteger, default=STATUS_WAITING)
+    # 企业回应
+    response = db.Column(db.String(256))

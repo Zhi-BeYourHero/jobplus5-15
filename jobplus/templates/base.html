@@ -27,6 +27,9 @@
         {% if current_user.is_authenticated and current_user.is_admin %}
             <li><a href="{{ url_for('admin.index') }}">控制台</a><li>
         {% endif %}
+        {% if current_user.is_authenticated and current_user.is_company %}
+            <li class="{% if active == 'admin' %}active{% endif %}"><a href="{{ url_for('company.admin_index', company_id=current_user.id) }}">管理<span class="sr-only">(current)</span></a></li>
+        {% endif %}
 	</ul>
 <ul class="nav navbar-nav navbar-right">
     {% if not current_user.is_authenticated  %}
@@ -61,7 +64,7 @@
       {% endif %}
   {% endwith %}
   {% block body %}{% endblock %}
-  {% block footer %}{% endblock %}
+  {% block footer %}Copyright © 2018 By Xiaozhizhi{% endblock %}
 </div>
       <!-- Bootstrap ?? jQuery -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
