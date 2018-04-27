@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %} {{ job.name }} {% endblock %}
+
+{% block head %}
+<div class="jumbotron">
+    <div class="container">
+        <div class="col-md-8">
+            <h2>{{ job.name }}</h2>            
+            <p><span class="job-salary">{{ job.salary }}</span>&nbsp;经验{{  job.experience_requirement }} 学历{{ job.degree_requirement }}</p>
+        </div>
+        <div class="col-md-4">
+            {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('front.login') }}" class="btn btn-success">投递简历</a>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+                {% if not job.current_user_is_applied %}
+                    <a href="{{ url_for('job.apply', job_id=job.id)}}" class="btn btn-success btn-lg delivery-btn">投递简历</a>
+                {% else %}
+                    <a href="#" class="btn btn-success btn-lg dilivery-btn" disabled="disabled">已投递</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="col-md-8">
+    <div class="job-msg">
+        <h3>职位标签</h3>
+        <p> {{ job.tags }}</p>
+        <br>
+        <h3>职位描述</p>
+        <p>{{ job.job_description }}</p>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="media">
+    <div class="media-left">
+        <a href="#">
+           <img src="{{ job.company.company_msg.logo }}" class="media-object" height="96" width="96">
+        </a>
+    </div>
+</div>
+    <h4> {{ job.company.company_msg.field }}</h4>
+    <p>领域： {{ job.company.company_msg.field }}</p>
+    <p>融资： {{ job.company.company_msg.finance_stage }}</p>
+    <p>城市： {{ job.company.company_msg.address }}</p>
+</div>
+{% endblock %}
