@@ -40,3 +40,6 @@ jobplus5-15
 
 ##### 20180429-2
 修改冲突文件：forms.py、front.py、macros.html
+
+##### 20180430 
+将models.py中的company字段改成company_msg, 相关联的也改了
