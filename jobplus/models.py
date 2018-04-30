@@ -1,7 +1,7 @@
 # coding:utf-8
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -35,8 +35,8 @@ class User(Base, UserMixin):
     role = db.Column(db.SmallInteger, default=ROLE_USER)
     phone = db.Column(db.String(11))
     work_years = db.Column(db.SmallInteger)
-    resume_url = db.Column(db.String(64))
-    company = db.relationship('Company', uselist=False)
+    resume_url = db.Column(db.String(128))
+    company_msg = db.relationship('Company', uselist=False)
     is_disable = db.Column(db.Boolean, default=False)
 
     @property
@@ -101,7 +101,7 @@ class Job(Base):
     degree_requirement = db.Column(db.String(64))
 
     # 公司信息
-    company_msg = db.Column(db.String(128))
+    #company_msg = db.Column(db.String(128))
     company_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
     company = db.relationship('User', uselist=False, backref=db.backref('jobs', lazy='dynamic'))
     # 职位要求
@@ -119,3 +119,38 @@ class Job(Base):
     @property
     def tag_list(self):
         return self.tags.split('/')
+
+class Delivery(Base):
+    __tablename__ = 'delivery'
+    #等待企业审核
+    STATUS_WAITING = 1 
+    #被拒绝
+    STATUS_REJECT = 2 
+    #简历被接收，等待面试通知
+    STATUS_ACCEPT = 3 
+
+    id = db.Column(db.Integer, primary_key=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id', ondelete="SET NULL"))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete="SET NULL"))
+    company_id = db.Column(db.Integer)
+    status = db.Column(db.SmallInteger, default=STATUS_WAITING)
+    # 企业回应 
+    response = db.Column(db.String(256))
+
+    @property
+    def user(self):
+        return User.query.get(self.user_id)
+    @property
+    def job(self):
+        return Job.query.get(self.job_id)
+
+class Resume(Base):
+    __tablename__ = 'resume'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', uselist=False)
+    job_experiences = db.Column(db.String(512))
+    edu_experiences = db.Column(db.String(512))
+    project_experiences = db.Column(db.String(512))
+

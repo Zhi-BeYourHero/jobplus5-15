@@ -3,6 +3,20 @@ body {
 }
 
 .form {
-    width: 444px;
+    /* 设置 form 的宽度为 400px */
+    width: 400px;
+    /* 设置 form 居中 */
     margin: 0 auto;
 }
+
+.job-box {
+    padding: 13px;
+    border: solid 1px #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+          }
+
+
+.job-salary {
+  color: #fd5f39;
+  }

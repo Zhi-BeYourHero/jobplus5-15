@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 {% from 'macros.html' import render_form %}
 
+{% block title %}UserProfile{% endblock %}
+
+
 {% block body %}
-<h3>Personal Message</h3>
-{{ render_form(form,url_for('user.profile'),upload_file='yes')}}
+    <div class="form">
+    <h3>Personal Message</h3>
+    {{ render_form(form,url_for('user.profile'),upload_file='yes')}}
+    </div>
 {% endblock %}

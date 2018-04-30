@@ -4,22 +4,32 @@ from flask_login import login_user, logout_user, login_required
 from flask_wtf import Form
 from jobplus.forms import LoginForm, RegisterForm
 from jobplus.forms import db
-from jobplus.models import User
+from jobplus.models import User, Job
 
 front = Blueprint('front', __name__)
 
 
-# Home页设计还没完成
 @front.route('/')
 def index():
-    return render_template('index.html')
-
+    newest_jobs = Job.query.order_by(Job.created_at.desc()).limit(9)
+    newest_companies = User.query.filter(
+        User.role == User.ROLE_COMPANY
+    ).order_by(User.created_at.desc()).limit(8)
+    return render_template(
+        'index.html',
+        active='index',
+        newest_jobs=newest_jobs,
+        newest_companies=newest_companies
+    )  
 
 @front.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        if User.query.filter_by(email=form.name_email.data).first():
+            user = User.query.filter_by(email=form.name_email.data).first()
+        else:
+            user = User.query.filter_by(name=form.name_email.data).first()
         if user.is_disable:
             # <<<<<<< HEAD
             flash('用户被禁止')
@@ -39,7 +49,7 @@ def login():
                 next = 'admin.index'
             elif user.is_company:
                 next = 'company.profile'
-            return redirect(url_for('front.index'))  # 原文件redierct拼写错误
+            return redirect(url_for(next))  # 原文件redierct拼写错误
     return render_template('login.html', form=form)
 
 
@@ -64,6 +74,7 @@ def personalregister():
 @front.route('/companyregister', methods=['GET', 'POST'])
 def companyregister():
     form = RegisterForm()
+    form.name.label = u'企业名称'
     if form.validate_on_submit():
         company = form.create_user()
         company.role = User.ROLE_COMPANY  # 设置成公司用户
