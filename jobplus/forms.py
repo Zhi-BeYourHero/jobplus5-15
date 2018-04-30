@@ -4,7 +4,7 @@ from flask import url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, ValidationError, IntegerField, TextAreaField
 from wtforms.validators import Required, Length, Email, EqualTo
-from jobplus.models import db, User, Job
+from jobplus.models import db, User, Job, Company
 from flask_wtf.file import FileField, FileRequired
 
 
@@ -70,7 +70,7 @@ class UserProfileForm(FlaskForm):
     password = PasswordField('密码(no write no change)')
     phone = StringField('手机号', validators=[Required()])
     work_year = IntegerField('工作年限')
-    resume_url = FileField('上传简历')
+    resume = FileField('上传简历')
     submit = SubmitField('提交')
     '''
 =======
@@ -106,7 +106,7 @@ class UserProfileForm(FlaskForm):
         
         '''
         # =======
-        f.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'resume', filename))
+        #f.save(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static', 'resume', filename))
         # >>>>>>> dev
 
         return filename
